@@ -6,6 +6,8 @@ import { island } from "./core/island.js";
 import { invoke, inTauri, listen, safeInvoke } from "./core/ipc.js";
 import { shared } from "./core/shared.js";
 import { registerAllModules } from "./modules/index.js";
+import { allModules } from "./core/modules.js";
+import { contextFor } from "./core/renderer.js";
 
 async function boot(): Promise<void> {
   await settings.init();
@@ -13,6 +15,7 @@ async function boot(): Promise<void> {
   const renderer = new Renderer();
 
   await registerAllModules();
+  for (const def of allModules()) { try { def.init?.(contextFor(def.id)); } catch (e) { console.error(`init ${def.id}`, e); } }
   renderer.mount(root);
   void island; // state machine is a singleton; modules drive it through ModuleContext
 

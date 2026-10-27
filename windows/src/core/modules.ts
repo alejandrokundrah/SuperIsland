@@ -39,8 +39,12 @@ export interface ModuleDef {
   cyclable?: boolean;
   /** Small widget used by the full-expanded Home tab (leading/center/trailing panels). */
   homeWidget?: ViewFactory;
-  /** Called once at startup so the module can subscribe to native events and call ctx.activate(). */
+  /** Called once, ONLY in the island window, so the module can subscribe to native events and call
+   *  ctx.activate(). Modules must have no side effects at import time other than registerModule(),
+   *  because the settings window also imports them (to render settingsSection). */
   init?(ctx: ModuleContext): void;
+  /** Module-specific controls rendered in Settings -> Modules (below the enable toggle). */
+  settingsSection?(): View;
   /** For extensions: precedence 0 = inactive, falls through to default compact content. */
   isInactive?(): boolean;
 }
